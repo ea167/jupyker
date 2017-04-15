@@ -1,10 +1,13 @@
-# Run ' docker build -t jupyker . ' to build it
+# Note: Use Docker Automated Build, OR
+# Run  ' docker build -t ea167/jupyker . ' to build it
+# Then ' docker login '
+# 	   ' docker push ea167/jupyker '
 
 ### Other great Docker images similar to this one:
 ### 	https://hub.docker.com/r/gw000/keras-full/
 ### 	https://hub.docker.com/r/waleedka/modern-deep-learning/
 
-### Tensorflow Fold?
+### TODO: Tensorflow Fold?
 ### Sonnet?
 
 # 17.04 is the latest - Out on April 13, 2017
@@ -108,12 +111,9 @@ EXPOSE 6006
 RUN pip3 --no-cache-dir install keras
 
 
-
-
 # Clean-up
 RUN apt-get clean && apt-get autoremove
 RUN rm -rf /var/lib/apt/lists/*
-
 
 
 # Configure console -- FIXME !!!
