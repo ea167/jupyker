@@ -4,6 +4,12 @@
 # http://localhost:8888 for Jupyter Notebook
 # http://localhost:6006 for TensorBoard
 # Built for Nvidia GPUs
+#
+# To run tensorboard:
+# 	tensorboard --logdir=path/to/logs
+# 	where path/to/logs is typically related to
+# 		file_writer = tf.summary.FileWriter('/path/to/logs', sess.graph)
+
 
 ### Other great Docker images similar to this one:
 ### 	https://hub.docker.com/r/gw000/keras-full/
