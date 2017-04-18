@@ -1,5 +1,5 @@
 # NOTE: to run:
-# 	docker run -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
+# 	docker run -it -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
 #
 # http://localhost:8888 for Jupyter Notebook
 # http://localhost:6006 for TensorBoard
@@ -24,7 +24,7 @@
 # 17.04 is the latest - Out on April 13, 2017
 # 	As far as now, Nvidia CUDA and drivers are only for 16.04 LTS
 FROM ubuntu:16.04
-MAINTAINER Eric Amram <eric dot amram at gmail dot com>
+LABEL maintainer="Eric Amram <eric dot amram at gmail dot com>"
 
 # Headless front-end, remove warnings
 ARG DEBIAN_FRONTEND=noninteractive
@@ -138,6 +138,11 @@ ENV PASSWD='sha1:98b767162d34:8da1bc3c75a0f29145769edc977375a373407824'
 RUN dpkg-query -l > /dpkg-query-l.txt \
  && pip3 freeze > /pip3-freeze.txt
 
+# Volumes and folders shared with host
+VOLUME ["/host"]
+
 # Start Jupyter Notebook
-WORKDIR /root/
-CMD /bin/bash -c 'jupyter notebook --allow-root --no-browser --ip=* --NotebookApp.password="$PASSWD" "$@"'
+#WORKDIR /root/
+WORKDIR /host/
+
+CMD jupyter notebook --allow-root --no-browser --ip=* --NotebookApp.password="$PASSWD"
