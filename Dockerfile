@@ -1,11 +1,22 @@
-# Note: Use Docker Automated Build, OR
-# Run  ' docker build -t ea167/jupyker . ' to build it
-# Then ' docker login '
-# 	   ' docker push ea167/jupyker '
+# NOTE: to run:
+# 	docker run -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
+#
+# http://localhost:8888 for Jupyter Notebook
+# http://localhost:6006 for TensorBoard
+# Built for Nvidia GPUs
 
 ### Other great Docker images similar to this one:
 ### 	https://hub.docker.com/r/gw000/keras-full/
 ### 	https://hub.docker.com/r/waleedka/modern-deep-learning/
+
+# NOTE: to build:
+# 	Use Docker Automated Build,
+# 	OR
+# 		Run  ' docker build -t ea167/jupyker . ' to build it
+# 		Then ' docker login '
+# 	   		 ' docker push ea167/jupyker '
+
+
 
 ### TODO: Tensorflow Fold?
 ### Sonnet?
@@ -127,6 +138,6 @@ ENV PASSWD='sha1:98b767162d34:8da1bc3c75a0f29145769edc977375a373407824'
 RUN dpkg-query -l > /dpkg-query-l.txt \
  && pip3 freeze > /pip3-freeze.txt
 
-### FIXME !!!!
-WORKDIR /srv/
-CMD /bin/bash -c 'jupyter notebook --no-browser --ip=* --NotebookApp.password="$PASSWD" "$@"'
+# Start Jupyter Notebook
+WORKDIR /root/
+CMD /bin/bash -c 'jupyter notebook --allow-root --no-browser --ip=* --NotebookApp.password="$PASSWD" "$@"'
