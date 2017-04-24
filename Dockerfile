@@ -75,7 +75,7 @@ RUN mkdir -p /opt/nvidia \
 # libcupti-dev (as required by Tensorflow) + PATH + LD_LIBRARY_PATH
 RUN apt-get install -y --no-install-recommends  libcupti-dev \
  && echo "export PATH=${PATH}:/usr/local/cuda-8.0.61/bin" >> /root/.bashrc \
- && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64" >> /root/.bashrc \
+ && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64" >> /root/.bashrc
 # && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1"   >> /root/.bashrc
  ### TODO: create the CUDA_HOME environment??
 
