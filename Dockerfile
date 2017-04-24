@@ -39,16 +39,16 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq
 
 # Utils
-RUN apt-get install -y --no-install-recommends apt-utils
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get install -y --no-install-recommends apt-utils \
+ && apt-get install -y --no-install-recommends \
 	ssh vim unzip less procps \
 	git curl wget \
-	build-essential g++ cmake
+	build-essential g++ cmake \
+ && echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99AcquireRetries \
+ && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list
 
 
 # Nvidia CuDA Toolkit (Ubuntu packages)
-RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99AcquireRetries \
- && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list
 RUN apt-get install --no-install-recommends -y nvidia-cuda-toolkit
 # install cuda opencl -> FIXME, does not work yet
 #RUN apt-get install --no-install-recommends -y \
@@ -72,12 +72,12 @@ RUN apt-get install -y --no-install-recommends \
 # Upgrade with latest pip
 RUN pip3 install --no-cache-dir --upgrade pip setuptools
 # Alias
-RUN echo "alias python='python3'" >> /root/.bash_aliases
-RUN echo "alias pip='pip3'" >> /root/.bash_aliases
+RUN echo "alias python='python3'" >> /root/.bash_aliases \
+ && echo "alias pip='pip3'" >> /root/.bash_aliases
 
 # Pillow (with dependencies)
-RUN apt-get install -y --no-install-recommends libjpeg-dev zlib1g-dev
-RUN pip3 --no-cache-dir install Pillow
+RUN apt-get install -y --no-install-recommends libjpeg-dev zlib1g-dev \
+ && pip3 --no-cache-dir install Pillow
 
 # OpenBLAS
 RUN apt-get install -y --no-install-recommends libopenblas-base libopenblas-dev
@@ -109,10 +109,10 @@ RUN pip3 --no-cache-dir install \
 
 
 # Jupyter notebook
-RUN pip3 --no-cache-dir install jupyter
+RUN pip3 --no-cache-dir install jupyter \
 # Jupyter config: don't open browser. Password will be set when launching, see below.
-RUN mkdir /root/.jupyter
-RUN echo "c.NotebookApp.ip = '*'" \
+ && mkdir /root/.jupyter \
+ && echo "c.NotebookApp.ip = '*'" \
          "\nc.NotebookApp.open_browser = False" \
          > /root/.jupyter/jupyter_notebook_config.py
 EXPOSE 8888
@@ -129,8 +129,8 @@ RUN pip3 --no-cache-dir install keras
 
 
 # Clean-up
-RUN apt-get clean && apt-get autoremove
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get clean && apt-get autoremove \
+ && rm -rf /var/lib/apt/lists/*
 
 
 # Configure console -- FIXME !!!
@@ -151,4 +151,5 @@ VOLUME ["/host"]
 #WORKDIR /root/
 WORKDIR /host/
 
-CMD jupyter notebook --allow-root --no-browser --ip=* --NotebookApp.password="$PASSWD"
+CMD jupyter notebook --allow-root --no-browser --ip=* --NotebookApp.password="$PASSWD" \
+    & /bin/bash
