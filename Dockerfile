@@ -64,18 +64,19 @@ RUN mkdir -p /opt/nvidia \
  && export PATH=${PATH}:/usr/local/cuda-8.0.61/bin \
  && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64
 # cuDNN v5.1 (as required by Tensorflow)
-RUN cd /opt/nvidia \
- && wget --no-check-certificate https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/8.0/cudnn-8.0-linux-x64-v5.1-tgz \
- && mv cudnn-8.0-linux-x64-v5.1-tgz cudnn-8.0-v5.1.tgz \
- && tar xzf cudnn-8.0-v5.1.tgz \
- && rm -f   cudnn-8.0-v5.1.tgz \
- && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1 \
- && cd /root
+### FIXME: Because of Nvidia Login policy, we cannot include the download in here
+# RUN cd /opt/nvidia \
+#  && wget --no-check-certificate https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/8.0/cudnn-8.0-linux-x64-v5.1-tgz \
+#  && mv cudnn-8.0-linux-x64-v5.1-tgz cudnn-8.0-v5.1.tgz \
+#  && tar xzf cudnn-8.0-v5.1.tgz \
+#  && rm -f   cudnn-8.0-v5.1.tgz \
+#  && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1 \
+#  && cd /root
 # libcupti-dev (as required by Tensorflow) + PATH + LD_LIBRARY_PATH
 RUN apt-get install -y --no-install-recommends  libcupti-dev \
  && echo "export PATH=${PATH}:/usr/local/cuda-8.0.61/bin" >> /root/.bashrc \
  && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64" >> /root/.bashrc \
- && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1"   >> /root/.bashrc
+# && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1"   >> /root/.bashrc
  ### TODO: create the CUDA_HOME environment??
 
 # OLDER Nvidia CuDA Toolkit (Ubuntu packages)
