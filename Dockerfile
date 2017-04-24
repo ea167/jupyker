@@ -45,15 +45,21 @@ RUN apt-get install -y --no-install-recommends apt-utils \
 	git curl wget \
 	build-essential g++ cmake \
  && echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99AcquireRetries \
- && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list
+ && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list \
+ && apt-get install -y --no-install-recommends linux-headers-generic
 
+
+# Nvidia CuDA Toolkit v8.0 (Nvidia for Ubuntu 16.04 x86_64 package)
+RUN wget --no-check-certificate http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+ && dpkg -i cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends  cuda \
+ && rm -f cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+ && export PATH=${PATH}:/usr/local/cuda-8.0.61/bin \
+ && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64
 
 # Nvidia CuDA Toolkit (Ubuntu packages)
-RUN apt-get install --no-install-recommends -y nvidia-cuda-toolkit
-# install cuda opencl -> FIXME, does not work yet
-#RUN apt-get install --no-install-recommends -y \
-#    nvidia-smi \
-#    nvidia-opencl-icd
+# RUN apt-get install --no-install-recommends -y nvidia-cuda-toolkit
 
 
 # Python (3.5)
