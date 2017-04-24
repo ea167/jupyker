@@ -46,19 +46,33 @@ RUN apt-get install -y --no-install-recommends apt-utils \
 	build-essential g++ cmake \
  && echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99AcquireRetries \
  && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list \
- && apt-get install -y --no-install-recommends linux-headers-generic
+ && apt-get install -y --no-install-recommends linux-headers-generic initramfs-tools
 
 
 # Nvidia CuDA Toolkit v8.0 (Nvidia for Ubuntu 16.04 x86_64 package)
-RUN wget --no-check-certificate http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+#   See https://www.tensorflow.org/install/install_linux for instructions
+RUN mkdir -p /opt/nvidia \
+ && pushd /opt/nvidia \
+ && wget --no-check-certificate http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
  && dpkg -i cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
  && apt-get update \
  && apt-get install -y --no-install-recommends  cuda \
  && rm -f cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
  && export PATH=${PATH}:/usr/local/cuda-8.0.61/bin \
- && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64
+ && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64 \
+ && popd
+# cuDNN v5.1 and libcupti-dev (as required by Tensorflow)
+RUN pushd /opt/nvidia \
+ && wget --no-check-certificate https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/8.0/cudnn-8.0-linux-x64-v5.1-tgz \
+ && mv cudnn-8.0-linux-x64-v5.1-tgz cudnn-8.0-v5.1.tgz \
+ && tar xzf cudnn-8.0-v5.1.tgz \
+ && rm -f   cudnn-8.0-v5.1.tgz \
+ && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1 \
+ && popd
+### TODO: create the CUDA_HOME environment??
+RUN apt-get install -y --no-install-recommends  libcupti-dev
 
-# Nvidia CuDA Toolkit (Ubuntu packages)
+# OLDER Nvidia CuDA Toolkit (Ubuntu packages)
 # RUN apt-get install --no-install-recommends -y nvidia-cuda-toolkit
 
 
