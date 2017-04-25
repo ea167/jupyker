@@ -141,7 +141,7 @@ RUN pip3 --no-cache-dir install \
 RUN pip3 --no-cache-dir install \
     nltk \
     gensim \
- && python -m nltk.downloader -d /usr/local/share/nltk_data all \
+ && python3 -m nltk.downloader -d /usr/local/share/nltk_data all \
  && echo "export NLTK_DATA=/usr/local/share/nltk_data" >> /root/.bashrc
 
 
