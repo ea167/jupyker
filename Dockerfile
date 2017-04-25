@@ -7,6 +7,8 @@
 # Built for Nvidia GPUs
 # WARNING: you need to register and accept Nvidia license agreement to use CUDA / cuDNN
 #   at https://developer.nvidia.com/cudnn
+#   And for that reason, it can not be included in this public Docker image.
+#   Shame on them!
 #
 # To run tensorboard:
 # 	tensorboard --logdir=path/to/logs
@@ -133,6 +135,14 @@ RUN pip3 --no-cache-dir install \
 #    python-matplotlib \
 #    python-pillow
 
+
+# NLP related:
+# NLTK
+RUN pip3 --no-cache-dir install \
+    nltk \
+    gensim \
+ && python -m nltk.downloader -d /usr/local/share/nltk_data all \
+ && echo "export NLTK_DATA=/usr/local/share/nltk_data" >> /root/.bashrc
 
 
 # Jupyter notebook
