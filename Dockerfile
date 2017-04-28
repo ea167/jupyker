@@ -136,15 +136,6 @@ RUN pip3 --no-cache-dir install \
 #    python-pillow
 
 
-# NLP related:
-# NLTK
-RUN pip3 --no-cache-dir install \
-    nltk \
-    gensim \
- && python3 -m nltk.downloader -d /usr/local/share/nltk_data all \
- && echo "export NLTK_DATA=/usr/local/share/nltk_data" >> /root/.bashrc
-
-
 # Jupyter notebook
 RUN pip3 --no-cache-dir install jupyter \
 # Jupyter config: don't open browser. Password will be set when launching, see below.
