@@ -1,5 +1,12 @@
-# NOTE: to run:
-# 	docker run -it -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
+# NOTES:
+#   1. You need an Nvidia GPU to run this Docker image.
+#           Otherwise use the alternative ea167/jupyker-cpu
+#   2. Install the nvidia-docker wrapper on your computer to launch the image
+#           https://github.com/NVIDIA/nvidia-docker
+#           Warning: can't be run on Mac unfortunately, only Linux and Windows (Aug 2017)
+#
+# To run:
+# 	nvidia-docker run -it -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
 #
 # http://localhost:8888 for Jupyter Notebook
 # http://localhost:6006 for TensorBoard
@@ -7,8 +14,6 @@
 # Built for Nvidia GPUs
 # WARNING: you need to register and accept Nvidia license agreement to use CUDA / cuDNN
 #   at https://developer.nvidia.com/cudnn
-#   And for that reason, it can not be included in this public Docker image.
-#   Shame on them!
 #
 # To run tensorboard:
 # 	tensorboard --logdir=path/to/logs
@@ -34,7 +39,10 @@
 
 # 17.04 is the latest - Out on April 13, 2017
 # 	As far as now, Nvidia CUDA and drivers are only for 16.04 LTS
-FROM ubuntu:16.04
+# We use the Nvidia Docker image with Ubuntu, Cuda, drivers and CNN installed.
+#   The runtime version rather than developer one   :latest == :8.0-devel-ubuntu16.04
+#FROM ubuntu:16.04
+FROM nvidia/cuda:8.0-cudnn6-runtime-ubuntu16.04
 LABEL maintainer="Eric Amram <eric dot amram at gmail dot com>"
 
 # Headless front-end, remove warnings
@@ -54,19 +62,19 @@ RUN apt-get install -y --no-install-recommends apt-utils \
  && apt-get install -y --no-install-recommends linux-headers-generic initramfs-tools
 
 
+# --- Nvidia CuDA already baked into the FROM docker image
 # Nvidia CuDA Toolkit v8.0 (Nvidia for Ubuntu 16.04 x86_64 package)
 #   See https://www.tensorflow.org/install/install_linux for instructions
-RUN mkdir -p /opt/nvidia \
- && cd /opt/nvidia \
- && wget --no-check-certificate http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
- && dpkg -i cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
- && apt-get update \
- && apt-get install -y --no-install-recommends  cuda \
- && rm -f cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
- && export PATH=${PATH}:/usr/local/cuda-8.0.61/bin \
- && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64
+# RUN mkdir -p /opt/nvidia \
+#  && cd /opt/nvidia \
+#  && wget --no-check-certificate http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+#  && dpkg -i cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+#  && apt-get update \
+#  && apt-get install -y --no-install-recommends  cuda \
+#  && rm -f cuda-repo-ubuntu1604_8.0.61-1_amd64.deb \
+#  && export PATH=${PATH}:/usr/local/cuda-8.0.61/bin \
+#  && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64
 # cuDNN v5.1 (as required by Tensorflow)
-### FIXME: Because of Nvidia Login policy, we cannot include the download in here
 # RUN cd /opt/nvidia \
 #  && wget --no-check-certificate https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v5.1/prod_20161129/8.0/cudnn-8.0-linux-x64-v5.1-tgz \
 #  && mv cudnn-8.0-linux-x64-v5.1-tgz cudnn-8.0-v5.1.tgz \
@@ -75,11 +83,9 @@ RUN mkdir -p /opt/nvidia \
 #  && export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1 \
 #  && cd /root
 # libcupti-dev (as required by Tensorflow) + PATH + LD_LIBRARY_PATH
-RUN apt-get install -y --no-install-recommends  libcupti-dev \
- && echo "export PATH=${PATH}:/usr/local/cuda-8.0.61/bin" >> /root/.bashrc \
- && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64" >> /root/.bashrc
-# && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/opt/nvidia/cudnn-8.0-v5.1"   >> /root/.bashrc
- ### TODO: create the CUDA_HOME environment??
+# RUN apt-get install -y --no-install-recommends  libcupti-dev \
+#  && echo "export PATH=${PATH}:/usr/local/cuda-8.0.61/bin" >> /root/.bashrc \
+#  && echo "export LD_LIBRARY_PATH=\${LD_LIBRARY_PATH}:/usr/local/cuda-8.0.61/lib64" >> /root/.bashrc
 
 # OLDER Nvidia CuDA Toolkit (Ubuntu packages)
 # RUN apt-get install --no-install-recommends -y nvidia-cuda-toolkit
