@@ -8,6 +8,12 @@
 # To run:
 # 	nvidia-docker run -it -d -p=6006:6006 -p=8888:8888 -v=~/DockerShared/JupykerShared:/host  ea167/jupyker
 #
+# NOTE: Due to nvidia-docker issues #112 and PR #364 not yet merged
+#           (see https://github.com/NVIDIA/nvidia-docker/pull/364)
+#       you need to run the first time without the -v=..., stop and relaunch (you can remove the first container)
+#           nvidia-docker run -it -d -p=6006:6006 -p=8888:8888 ea167/jupyker
+#
+#
 # http://localhost:8888 for Jupyter Notebook
 # http://localhost:6006 for TensorBoard
 #
@@ -42,7 +48,7 @@
 # We use the Nvidia Docker image with Ubuntu, Cuda, drivers and CNN installed.
 #   The runtime version rather than developer one   :latest == :8.0-devel-ubuntu16.04
 #FROM ubuntu:16.04
-FROM nvidia/cuda:8.0-cudnn6-runtime-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn7-devel-ubuntu16.04
 LABEL maintainer="Eric Amram <eric dot amram at gmail dot com>"
 
 # Headless front-end, remove warnings
