@@ -48,7 +48,7 @@
 # We use the Nvidia Docker image with Ubuntu, Cuda, drivers and CNN installed.
 #   The runtime version rather than developer one   :latest == :8.0-devel-ubuntu16.04
 #FROM ubuntu:16.04
-FROM nvidia/cuda:8.0-cudnn7-devel-ubuntu16.04
+FROM nvidia/cuda:8.0-cudnn6-devel-ubuntu16.04
 LABEL maintainer="Eric Amram <eric dot amram at gmail dot com>"
 
 # Headless front-end, remove warnings
