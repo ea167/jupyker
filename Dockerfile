@@ -60,12 +60,20 @@ RUN apt-get update -qq
 # Utils
 RUN apt-get install -y --no-install-recommends apt-utils \
  && apt-get install -y --no-install-recommends \
+    locales \
 	ssh vim unzip less procps \
 	git curl wget \
 	build-essential g++ cmake \
  && echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/99AcquireRetries \
  && sed -i 's/main$/main contrib non-free/' /etc/apt/sources.list \
  && apt-get install -y --no-install-recommends linux-headers-generic initramfs-tools
+
+
+# Locales
+RUN locale-gen "en_US.UTF-8" \
+ && update-locale LC_ALL="en_US.UTF-8" LANG="en_US.UTF-8"
+
+ENV LANG="en_US.UTF-8" LANGUAGE="en_US:en" LC_ALL="en_US.UTF-8"
 
 
 # --- Nvidia CuDA already baked into the FROM docker image
@@ -110,10 +118,9 @@ RUN apt-get install -y --no-install-recommends \
     python3-h5py \
     python3-yaml \
     python3-pydot
-# Upgrade with latest pip
-RUN pip3 install --no-cache-dir --upgrade pip setuptools
-# Alias
-RUN echo "alias python='python3'" >> /root/.bash_aliases \
+# Upgrade with latest pip and create aliases
+RUN pip3 install --no-cache-dir --upgrade pip setuptools \
+ && echo "alias python='python3'" >> /root/.bash_aliases \
  && echo "alias pip='pip3'" >> /root/.bash_aliases
 
 # Pillow (with dependencies)
